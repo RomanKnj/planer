@@ -1,0 +1,184 @@
+/* Planer: nutzt die Bausteine von hud.css (Felder, Kopfzeile, Schrift, Farben), Knöpfe und Kalender wie im
+   Trainingslog. Jede Art hat ihre Farbe (--k, kommt aus planer.js). Links der gewählte Tag als Zeitleiste,
+   rechts Kalender und Gruppe; am Handy eine Spalte. */
+
+.pl {
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: 100vh;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  grid-template-areas:
+    "bar bar"
+    "join join"
+    "day cal"
+    "day group";
+  grid-template-rows: auto auto auto 1fr;
+  align-content: start;
+}
+.pl .bar { grid-area: bar; }
+.pl .join { grid-area: join; max-width: 460px; }
+.pl .day { grid-area: day; align-self: start; }
+.pl .cal-panel { grid-area: cal; align-self: start; }
+.pl .group { grid-area: group; align-self: start; }
+.pl [hidden] { display: none; }
+
+.btn {
+  font: inherit;
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--hologramm);
+  background: rgba(95, 217, 255, 0.06);
+  border: 1px solid var(--linie);
+  padding: 6px 12px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btn:hover { color: var(--kern); border-color: var(--hologramm); background: rgba(95, 217, 255, 0.13); }
+.btn:disabled { opacity: 0.5; cursor: default; }
+.btn.play { font-weight: 700; color: #04121c; background: var(--hologramm); border-color: var(--hologramm); }
+.btn.danger { color: var(--alarm); border-color: rgba(255, 59, 48, 0.5); }
+button:focus-visible, input:focus-visible, textarea:focus-visible, summary:focus-visible, li[tabindex]:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.panel h2.sub { margin-top: 18px; }
+.note { font-size: 0.85rem; color: var(--dim); }
+.note.err { color: var(--alarm); }
+.note:empty { display: none; }
+
+.field {
+  width: 100%;
+  padding: 9px 11px;
+  font: inherit;
+  font-size: 1.05rem;
+  color: var(--kern);
+  background: rgba(4, 11, 20, 0.7);
+  border: 1px solid var(--linie);
+  color-scheme: dark;
+}
+.field::placeholder { color: rgba(111, 164, 184, 0.6); }
+.field.code { font-family: var(--zahl); text-transform: uppercase; }
+.field.code::placeholder { font-family: var(--kopf); text-transform: none; }
+textarea.field { resize: vertical; min-height: 4.5em; }
+
+/* Gruppe beitreten oder anlegen */
+#join-form { display: grid; gap: 8px; margin-top: 12px; }
+#join-form .btn { margin-bottom: 6px; }
+
+/* Tag */
+.day-nav, .cal-nav { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.day-nav b, .cal-nav b { flex: 1; min-width: 0; font-size: 1.3rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--kern); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#day-prev, #day-next, #cal-prev, #cal-next { width: 2.6rem; padding-left: 0; padding-right: 0; font-size: 1.1rem; line-height: 1; }
+
+/* Zeitleiste: Uhrzeit links, Farbbalken der Art, Karte; dazwischen freie Zeit oder Überschneidung */
+.tl { margin: 0; padding: 0; list-style: none; }
+.act { display: grid; grid-template-columns: 3.6rem 5px minmax(0, 1fr); gap: 0 12px; cursor: pointer; }
+.act-time { padding: 9px 0; font-family: var(--zahl); text-align: right; }
+.act-time b { display: block; font-weight: 400; font-size: 1.15rem; color: var(--kern); }
+.act-time small { display: block; font-size: 0.85rem; color: var(--dim); }
+.act-bar { background: var(--k); box-shadow: 0 0 8px -2px var(--k); }
+.act-card { min-width: 0; margin: 3px 0; padding: 8px 12px; border: 1px solid rgba(95, 217, 255, 0.12); background: color-mix(in srgb, var(--k) 6%, rgba(4, 11, 20, 0.5)); }
+.act:hover .act-card { border-color: color-mix(in srgb, var(--k) 55%, transparent); }
+.act-kind { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--k); }
+.act-card > b { display: block; font-size: 1.2rem; font-weight: 700; letter-spacing: 0.03em; color: var(--kern); overflow-wrap: anywhere; }
+.act-meta { display: flex; flex-wrap: wrap; gap: 2px 14px; font-size: 0.9rem; color: var(--text); }
+.act-meta .cost { font-family: var(--zahl); }
+.act-note { margin: 4px 0 0; font-size: 0.9rem; color: var(--dim); white-space: pre-line; overflow-wrap: anywhere; }
+.act-by { display: block; margin-top: 4px; font-size: 0.75rem; letter-spacing: 0.06em; color: var(--dim); }
+
+.gap { display: grid; grid-template-columns: 3.6rem 5px minmax(0, 1fr); gap: 0 12px; font-size: 0.85rem; letter-spacing: 0.08em; color: var(--dim); }
+.gap::before { content: ""; grid-column: 2; background: repeating-linear-gradient(180deg, var(--linie) 0 3px, transparent 3px 7px); }
+.gap span { grid-column: 3; padding: 4px 0; }
+.gap.over { color: var(--gold); }
+.gap.over::before { background: var(--gold); opacity: 0.6; }
+
+.sum { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 14px; margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(95, 217, 255, 0.12); font-size: 0.95rem; }
+.sum b { font-family: var(--zahl); font-weight: 400; color: var(--kern); }
+.day-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 14px; }
+.day-actions .note { margin-left: auto; }
+
+/* Kalender */
+.cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.cal .wd { padding-bottom: 2px; font-size: 0.72rem; letter-spacing: 0.12em; text-align: center; text-transform: uppercase; color: var(--dim); }
+.cal button { position: relative; aspect-ratio: 1; min-height: 38px; padding: 0; font: inherit; font-family: var(--zahl); font-size: 0.95rem; color: var(--dim); background: rgba(95, 217, 255, 0.04); border: 1px solid transparent; cursor: pointer; }
+.cal button.has { color: var(--kern); background: rgba(95, 217, 255, 0.14); }
+.cal button.today { border-color: var(--kern); }
+.cal button.sel { outline: 2px solid var(--gold); outline-offset: 1px; }
+.cal button.past { opacity: 0.5; }
+.cal .dots { position: absolute; left: 0; right: 0; bottom: 3px; display: flex; justify-content: center; gap: 2px; }
+.cal .dots i { width: 5px; height: 5px; background: var(--k); box-shadow: 0 0 0 1px #04121c; }
+
+.next li { display: grid; grid-template-columns: 4.6rem minmax(0, 1fr) auto; gap: 10px; align-items: baseline; padding: 7px 4px; border-bottom: 1px solid rgba(95, 217, 255, 0.1); cursor: pointer; }
+.next li:hover { background: rgba(95, 217, 255, 0.07); }
+.next time { font-family: var(--zahl); color: var(--hologramm); }
+.next span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.next small { font-family: var(--zahl); color: var(--dim); }
+
+/* Gruppe */
+.grp-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.grp-head b { min-width: 0; overflow-wrap: anywhere; font-size: 1.2rem; color: var(--kern); }
+.grp-head .btn { font-family: var(--zahl); letter-spacing: 0.04em; text-transform: none; }
+.grp-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 10px; }
+.grp-me { display: grid; gap: 4px; margin: 14px 0 12px; font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); }
+.grp-me .field { text-transform: none; letter-spacing: normal; }
+
+/* Arten als Knöpfe */
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.chip {
+  --k: var(--hologramm);
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 11px;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--k);
+  background: rgba(4, 11, 20, 0.6);
+  border: 1px solid color-mix(in srgb, var(--k) 45%, transparent);
+  cursor: pointer;
+}
+.chip::before { content: ""; width: 9px; height: 9px; background: var(--k); }
+.chip[aria-checked="true"] { color: #04121c; background: var(--k); border-color: var(--k); }
+.chip[aria-checked="true"]::before { background: #04121c; }
+
+/* Bearbeiten */
+.edit {
+  width: min(560px, calc(100vw - 24px));
+  max-height: calc(100vh - 24px);
+  padding: 16px;
+  color: var(--text);
+  font-family: var(--kopf);
+  background: linear-gradient(180deg, #0e2a42, #07141f);
+  border: 1px solid var(--hologramm);
+  box-shadow: 0 0 40px -10px var(--hologramm);
+}
+.edit::backdrop { background: rgba(2, 6, 12, 0.75); }
+.edit h2 { margin: 0 0 12px; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--hologramm); }
+#edit-form { display: grid; gap: 10px; }
+#edit-form label { display: grid; gap: 3px; font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); }
+#edit-form label .field { letter-spacing: normal; }
+#edit-form .note { margin: 0; }
+.grid3 { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 8px; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+#f-start, #f-end, #f-dur, #f-cost { font-family: var(--zahl); }
+.edit-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.edit-actions .danger { margin-left: auto; }
+
+/* Handy: eine Spalte, Tag oben */
+@media (max-width: 900px) {
+  .pl { display: flex; flex-direction: column; min-height: 0; padding: 10px; gap: 10px; }
+  .pl .bar { grid-template-columns: 1fr; gap: 8px; padding-bottom: 8px; }
+  .pl .bar .brand p { display: none; }
+  .pl .banner { justify-self: stretch; text-align: center; padding: 6px 10px; font-size: 0.9rem; }
+  .pl > .panel { align-self: stretch; min-width: 0; max-width: none; }
+  .brand h1 { font-size: 1.4rem; }
+  .panel { padding: 12px 12px 14px; }
+  .act, .gap { grid-template-columns: 3.1rem 4px minmax(0, 1fr); gap: 0 9px; }
+  .grid3 { grid-template-columns: 1fr 1fr; }
+  .grid3 label:first-child { grid-column: 1 / -1; }
+  .edit { padding: 12px; }
+}

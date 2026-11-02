@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Planer</title>
+<meta name="description" content="Gemeinsam Aktivitäten planen: Kino, Essen und alles danach, Tag für Tag als Zeitleiste.">
+<meta name="theme-color" content="#040b14">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="fonts.css">
+<link rel="stylesheet" href="hud.css">
+<link rel="stylesheet" href="planer.css?v=2">
+</head>
+<body>
+<div class="sweep" aria-hidden="true"></div>
+<main class="pl">
+
+  <header class="bar" style="--n:0">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="-20 -20 40 40" aria-hidden="true">
+        <circle r="17" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".6"/>
+        <path d="M-8 -10 V10 M-8 -8 H9 M-8 0 H5 M-8 8 H9" fill="none" stroke="currentColor" stroke-width="1.6"/>
+        <circle cx="-8" cy="-8" r="2.2" fill="currentColor"/><circle cx="-8" cy="0" r="2.2" fill="currentColor"/><circle cx="-8" cy="8" r="2.2" fill="currentColor"/>
+      </svg>
+      <div>
+        <h1>Planer</h1>
+        <p id="brand-sub">Gemeinsame Aktivitäten</p>
+      </div>
+    </div>
+    <div class="banner" id="banner" data-level="wait"><span id="banner-text">Lade</span></div>
+  </header>
+
+  <section class="panel join" id="join" style="--n:1" hidden>
+    <h2>Gruppe</h2>
+    <p class="empty">Alle mit demselben Gruppen-Code sehen und bearbeiten dieselben Pläne. Dein Name steht an allem, was du einträgst.</p>
+    <form id="join-form" autocomplete="off">
+      <input class="field" id="join-name" maxlength="24" placeholder="Dein Name" aria-label="Dein Name">
+      <input class="field code" id="join-code" maxlength="8" placeholder="Gruppen-Code" aria-label="Gruppen-Code">
+      <button class="btn play" type="submit">Beitreten</button>
+      <input class="field" id="join-group" maxlength="40" placeholder="Oder Name einer neuen Gruppe" aria-label="Name der neuen Gruppe">
+      <button class="btn" type="button" id="create-btn">Gruppe anlegen</button>
+      <p class="note" id="join-note"></p>
+    </form>
+  </section>
+
+  <section class="panel day" id="day" style="--n:1" hidden>
+    <h2>Tag</h2>
+    <div class="day-nav">
+      <b id="day-name">–</b>
+      <button class="btn" type="button" id="day-prev" aria-label="Vortag">‹</button>
+      <button class="btn" type="button" id="day-today">Heute</button>
+      <button class="btn" type="button" id="day-next" aria-label="Nächster Tag">›</button>
+    </div>
+    <ol class="tl" id="timeline"></ol>
+    <p class="empty" id="day-empty">Für diesen Tag ist noch nichts geplant.</p>
+    <div class="sum" id="day-sum" hidden></div>
+    <div class="day-actions">
+      <button class="btn play" type="button" id="add">+ Aktivität</button>
+      <button class="btn" type="button" id="share-day">Tag teilen</button>
+      <span class="note" id="day-note"></span>
+    </div>
+  </section>
+
+  <section class="panel cal-panel" id="cal-panel" style="--n:2" hidden>
+    <h2>Kalender</h2>
+    <div class="cal-nav">
+      <b id="cal-name">–</b>
+      <button class="btn" type="button" id="cal-prev" aria-label="Vormonat">‹</button>
+      <button class="btn" type="button" id="cal-next" aria-label="Nächster Monat">›</button>
+    </div>
+    <div class="cal" id="cal" aria-label="Kalender mit geplanten Tagen"></div>
+    <h2 class="sub">Als Nächstes</h2>
+    <ul class="next" id="next"></ul>
+    <p class="empty" id="next-empty">Nichts Geplantes in der Zukunft.</p>
+  </section>
+
+  <section class="panel group" id="group" style="--n:3" hidden>
+    <h2>Gruppe</h2>
+    <div class="grp-head"><b id="grp-name"></b><button class="btn" type="button" id="grp-code" title="Code kopieren"></button></div>
+    <div class="grp-row">
+      <button class="btn play" type="button" id="invite">Einladen</button>
+      <span class="note" id="grp-note"></span>
+    </div>
+    <label class="grp-me">Du bist
+      <input class="field" id="me-name" maxlength="24" aria-label="Dein Name">
+    </label>
+    <button class="btn danger" type="button" id="leave">Gruppe wechseln</button>
+  </section>
+
+</main>
+
+<dialog class="edit" id="edit">
+  <form id="edit-form" method="dialog" autocomplete="off">
+    <h2 id="edit-title">Aktivität</h2>
+    <div class="chips" id="kinds" role="radiogroup" aria-label="Art"></div>
+    <input class="field" id="f-title" maxlength="80" placeholder="Titel, z. B. Filmname oder Restaurant" aria-label="Titel">
+    <div class="grid3">
+      <label>Datum<input class="field" id="f-day" type="date"></label>
+      <label>Beginn<input class="field" id="f-start" type="time" step="300"></label>
+      <label>Ende<input class="field" id="f-end" type="time" step="300"></label>
+    </div>
+    <div class="grid2">
+      <label>Dauer (min)<input class="field" id="f-dur" type="number" min="0" max="1440" step="5" inputmode="numeric"></label>
+      <label>Kosten p. P. (€)<input class="field" id="f-cost" inputmode="decimal" placeholder="0"></label>
+    </div>
+    <input class="field" id="f-place" maxlength="80" placeholder="Ort" aria-label="Ort">
+    <textarea class="field" id="f-note" maxlength="500" rows="3" placeholder="Notiz, z. B. Sitzplätze, Reservierung, Link" aria-label="Notiz"></textarea>
+    <p class="note" id="edit-meta"></p>
+    <p class="note err" id="edit-note"></p>
+    <div class="edit-actions">
+      <button class="btn play" type="button" id="save">Speichern</button>
+      <button class="btn" type="button" id="cancel">Abbrechen</button>
+      <button class="btn danger" type="button" id="delete">Löschen</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- ?v=… bei jeder Änderung an planer.js/.css hochzählen: GitHub Pages lässt Browser Dateien 10 min zwischenspeichern -->
+<script src="planer.js?v=2"></script>
+</body>
+</html>
